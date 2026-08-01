@@ -1,24 +1,12 @@
 # dependencies
 node_modules/
 
-# next.js build output
+# next.js build output (regenerable; too large for GitHub)
 .next/
 out/
 
-# production
+# production build output
 build/
-
-# env files
-.env
-.env.*
-!.env.example
-
-# debug / runtime logs
-*.log
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
 
 # misc
 .DS_Store
