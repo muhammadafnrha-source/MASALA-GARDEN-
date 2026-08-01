@@ -1,0 +1,17 @@
+{
+  "name": "masala-garden-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "masala-garden-app",
+    "masala-garden-admin"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix masala-garden-app\" \"npm run dev --prefix masala-garden-admin\"",
+    "build": "npm run build --prefix masala-garden-app && npm run build --prefix masala-garden-admin",
+    "start": "concurrently \"npm run start --prefix masala-garden-app\" \"npm run start --prefix masala-garden-admin\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
