@@ -1,0 +1,54 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The single admin account allowed to manage the restaurant.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'masalagardenoluvil@gmail.com';
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ---------- MENU ----------
+    // Everyone (customer app) can browse the menu.
+    match /menu_categories/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /menu_items/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---------- OFFERS ----------
+    // Customers need to read active offers at checkout / cart.
+    match /offers/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---------- ORDERS ----------
+    match /orders/{orderId} {
+      // Signed-in customers place orders from checkout; admin/POS also create.
+      allow create: if isSignedIn();
+
+      // Admin sees everything. A customer may read only their own orders.
+      allow read: if isAdmin()
+        || (isSignedIn() && request.auth.uid == resource.data.customerId);
+
+      // Admin can change any status. A customer may only cancel their own order.
+      allow update: if isAdmin()
+        || (isSignedIn()
+            && request.auth.uid == resource.data.customerId
+            && request.resource.data.status == 'cancelled');
+
+      // Only admin can delete (clear order history).
+      allow delete: if isAdmin();
+    }
+  }
+}
